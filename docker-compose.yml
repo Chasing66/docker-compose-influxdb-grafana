@@ -1,9 +1,10 @@
-version: '2'
+version: '3.8'
 services:
   influxdb:
     image: influxdb:latest
     ports:
       - '8086:8086'
+    restart: unless-stopped
     volumes:
       - influxdb-storage:/var/lib/influxdb
     environment:
@@ -13,9 +14,10 @@ services:
   chronograf:
     image: chronograf:latest
     ports:
-      - '127.0.0.1:8888:8888'
+      - '8888:8888'
     volumes:
       - chronograf-storage:/var/lib/chronograf
+    restart: unless-stopped
     depends_on:
       - influxdb
     environment:
@@ -31,6 +33,7 @@ services:
       - ./grafana-provisioning/:/etc/grafana/provisioning
     depends_on:
       - influxdb
+    restart: unless-stopped
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
